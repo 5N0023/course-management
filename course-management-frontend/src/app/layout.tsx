@@ -29,9 +29,9 @@ export default function RootLayout({
       <body
         className={`w-screen h-screen font-sans bg-green-500 text-primary-foreground flex flex-col ${geistSans} ${geistMono} `}
       >
-        <h1 className="text-4xl font-bold text-secondary text-center m-4">
+        <h2 className="text-2xl font-bold text-secondary text-center m-4 md:text-4xl">
           Course Management
-        </h1>
+        </h2>
         <Toaster />
         <div className="flex flex-col items-center justify-center w-screen h-screen">
           {children}
