@@ -27,10 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`w-screen h-screen font-sans bg-green-500 text-primary-foreground flex ${geistSans} ${geistMono} items-center justify-center flex`}
+        className={`w-screen h-screen font-sans bg-green-500 text-primary-foreground flex flex-col ${geistSans} ${geistMono} `}
       >
+        <h1 className="text-4xl font-bold text-secondary text-center m-4">
+          Course Management
+        </h1>
         <Toaster />
-        <div className="container mx-auto px-4">{children}</div>
+        <div className="flex flex-col items-center justify-center w-screen h-screen">
+          {children}
+        </div>
       </body>
     </html>
   );
