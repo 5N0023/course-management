@@ -1,7 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import e from 'express';
 
 @Injectable()
 export class AuthService {
@@ -15,40 +20,38 @@ export class AuthService {
     pass: string,
   ): Promise<{ access_token: string }> {
     try {
+
       const user = await this.usersService.findOne(username);
       // check password hash
       if (!user || !(await bcrypt.compare(pass, user.password))) {
         throw new UnauthorizedException('Invalid credentials');
       }
-      const payload = { username: user.username, role: user.role };
+      const payload = { username: user.username };
       return {
-        access_token: await this.jwtService.signAsync(payload),
+        access_token: await this.jwtService.signAsync(payload, {
+          secret: 'secretKey'
+        }),
       };
     } catch (err) {
-      return err.message || 'an error occurred';
+      // return response with error message
+      throw new UnauthorizedException('Invalid credentials');
     }
   }
-  async register(
-    username: string,
-    password: string,
-    role: 'admin' | 'author' | 'reader',
-  ): Promise<any> {
+  async register(username: string, password: string): Promise<any> {
     try {
       // use bcrypt to hash password
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await this.usersService.create({
         username,
         password: hashedPassword,
-        role,
       });
       if (!user) {
-        throw new Error('User creation failed');
+        throw new BadRequestException('User already exists');
       }
       // login user after registration
       return await this.login(username, password);
     } catch (err) {
-      return err || 'an error occurred';
+      throw new BadRequestException('User already exists');
     }
   }
-
 }

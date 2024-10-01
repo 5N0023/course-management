@@ -7,5 +7,4 @@ export interface loginCreds {
 export interface User {
     username: string;
     password: string;
-    role: 'admin' | 'author' | 'reader';
   }

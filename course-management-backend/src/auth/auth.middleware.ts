@@ -24,14 +24,10 @@ export class AuthMiddleware implements NestMiddleware {
     // check if token is valid
     const jwtService = new JwtService({});
     let isLoggedIn = false;
-    console.log('token', token);
     try {
-      console.log('decoded');
-      const decoded = jwtService.verify(token, { secret: process.env.JWT_SECRET });
-      console.log('decoded', decoded);
+      const decoded = jwtService.verify(token, { secret: 'secretKey' });
       isLoggedIn = true;
     } catch (err) {
-      console.log('error', err);
       throw new UnauthorizedException('User not authenticated');
     }
     if (!isLoggedIn) {

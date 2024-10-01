@@ -10,7 +10,7 @@ import { AuthMiddleware } from './auth.middleware';
     UsersModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET,
+      secret: 'secretKey',
       signOptions: { expiresIn: '1d' },
     }),
   ],
@@ -22,6 +22,6 @@ export class AuthModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware) // Apply the middleware
-      .forRoutes('auth/checkToken'); // Define the routes for the middleware
+      .forRoutes('auth/verify'); // Define the routes for the middleware
   }
 }
