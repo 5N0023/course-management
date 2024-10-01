@@ -1,15 +1,16 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
+import { AuthMiddleware } from './auth.middleware';
 
 @Module({
   imports: [
     UsersModule,
     JwtModule.register({
       global: true,
-      secret: 'secretKey',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
   ],
@@ -17,4 +18,10 @@ import { AuthController } from './auth.controller';
   controllers: [AuthController],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware) // Apply the middleware
+      .forRoutes('auth/checkToken'); // Define the routes for the middleware
+  }
+}
