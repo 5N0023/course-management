@@ -21,17 +21,18 @@ export async function POST(req: NextRequest) {
       password,
     });
     const token = response.headers["set-cookie"];
-    const finalResponse = new Response(response.data, {
+    const finalResponse = new Response(token ? token.join(", ") : "", {
       status: response.status,
       statusText: response.statusText,
       headers: {
         "set-cookie": token ? token.join(", ") : "",
       },
     });
+    
 
     return finalResponse;
   } catch (error: any) {
-    const message =error.response.data.message;
+    const message = error.response.data.message;
     const response = new Response(message, {
       status: 400,
       statusText: error.response.statusText,

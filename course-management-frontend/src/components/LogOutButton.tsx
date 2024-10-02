@@ -13,6 +13,8 @@ export default function LogOutButton() {
     try {
       const response = await axios.get("http://localhost:3000/auth/logout");
       if (response.status === 200) {
+        // remove token from local storage
+        localStorage.removeItem("token");
         toast({
           title: "Logout success",
           description: "You have successfully logged out.",

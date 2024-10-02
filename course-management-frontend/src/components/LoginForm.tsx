@@ -54,11 +54,20 @@ export function LoginFrom({ loginState }: { loginState: "login" | "signup" }) {
             title: "Signup success",
             description: "You have successfully signed up.",
           });
+          localStorage.setItem(
+            "token",
+            response.data.split("=")[1].split(";")[0]
+          );
         } else {
           toast({
             title: "Login success",
             description: "You have successfully logged in.",
           });
+
+          localStorage.setItem(
+            "token",
+            response.data.split("=")[1].split(";")[0]
+          );
         }
         router.push("/");
       }
@@ -82,7 +91,10 @@ export function LoginFrom({ loginState }: { loginState: "login" | "signup" }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6 min-h-[300px]">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-2/3 space-y-6 min-h-[300px]"
+      >
         <FormField
           control={form.control}
           name="username"

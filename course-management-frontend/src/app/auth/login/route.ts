@@ -22,14 +22,15 @@ export async function POST(req: NextRequest ) {
     });
     // get cookie from response
     const token = response.headers["set-cookie"];
-    const finalResponse = new Response(response.data, {
+    
+    const finalResponse = new Response(token ? token.join(", ") : "", {
       status: response.status,
       statusText: response.statusText,
       headers: {
         "set-cookie": token ? token.join(", ") : "",
       },
     });
-
+    // add token to local storage
     return finalResponse;
   } catch (error: any) {
     const response = new Response(error.response.data, {

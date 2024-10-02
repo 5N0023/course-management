@@ -41,5 +41,5 @@ export async function middleware(request: NextRequest) {
 
 // Specify the routes where this middleware should run
 export const config = {
-  matcher: ["/", "/login", "/signup"],
+  matcher: ["/", "/login", "/signup", "/admin"],
 };
