@@ -19,4 +19,5 @@ echo "MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD" >> .env
 
 docker compose -f docker-compose-mongodb.yml up -d --build
 cd course-management-backend
+npm install
 npm run start

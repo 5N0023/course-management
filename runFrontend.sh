@@ -7,5 +7,6 @@ echo "API_URL=$API_URL" > ./course-management-frontend/.env
 echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" >> ./course-management-frontend/.env
 
 cd course-management-frontend
+npm install
 npm run build
 npm run start
