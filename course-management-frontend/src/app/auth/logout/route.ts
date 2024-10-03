@@ -1,13 +1,8 @@
-// create login endpoint By fetching backend API
 "use server";
 
-import { NextApiRequest } from "next/types";
-import axios from "axios";
-import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest ) {
+export async function GET() {
   try {
-    // return a response that clears the cookie
     const finalResponse = new Response("Logged out", {
       status: 200,
       statusText: "OK",
@@ -16,8 +11,7 @@ export async function GET(req: NextRequest ) {
       },
     });
     return finalResponse;
-  }
-  catch (error: any) {
+  } catch (error) {
     const response = new Response(error.response.data, {
       status: 400,
       statusText: error.response.statusText,
@@ -25,4 +19,3 @@ export async function GET(req: NextRequest ) {
     return response;
   }
 }
-

@@ -1,11 +1,9 @@
-// create login endpoint By fetching backend API
 "use server";
 
-import { NextApiRequest } from "next/types";
 import axios from "axios";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-const backendUrl = process.env.API_URL || "http://localhost:5000";
+const backendUrl = process.env.API_URL || "http://backend:5000";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -31,11 +29,11 @@ export async function POST(req: NextRequest) {
     
 
     return finalResponse;
-  } catch (error: any) {
-    const message = error.response.data.message;
+  } catch (error) {
+    const message = error?.response?.data?.message || "Error registering user";
     const response = new Response(message, {
       status: 400,
-      statusText: error.response.statusText,
+      statusText: error?.response?.statusText,
     });
     return response;
   }

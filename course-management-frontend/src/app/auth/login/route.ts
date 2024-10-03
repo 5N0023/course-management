@@ -1,12 +1,10 @@
-// create login endpoint By fetching backend API
 "use server";
 
-import { NextApiRequest } from "next/types";
 import axios from "axios";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-const backendUrl = process.env.API_URL || "http://localhost:5000";
-export async function POST(req: NextRequest ) {
+const backendUrl = process.env.API_URL || "http://backend:5000";
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const username = body.username;
@@ -22,7 +20,7 @@ export async function POST(req: NextRequest ) {
     });
     // get cookie from response
     const token = response.headers["set-cookie"];
-    
+
     const finalResponse = new Response(token ? token.join(", ") : "", {
       status: response.status,
       statusText: response.statusText,
@@ -32,8 +30,8 @@ export async function POST(req: NextRequest ) {
     });
     // add token to local storage
     return finalResponse;
-  } catch (error: any) {
-    const response = new Response(error.response.data, {
+  } catch (error) {
+    const response = new Response(error?.response?.data || { error }, {
       status: 400,
       statusText: error.response.statusText,
     });

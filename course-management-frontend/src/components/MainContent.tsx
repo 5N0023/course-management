@@ -16,9 +16,8 @@ export default function MainContent() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-   
         const response = await axios.get(
-          `http://localhost:5000/course?page=${currentPage}&q=${search}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/course?page=${currentPage}&q=${search}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -31,15 +30,25 @@ export default function MainContent() {
         setCourses(response.data.data);
         setTotalPages(response.data.totalPages);
       } catch (error) {
-        toast ({
-          title: "Error",
-          description: "Error fetching courses",
-          variant: "destructive",
-        });
+        if (error.response.status === 401) {
+          toast({
+            title: "Unauthorized",
+            description: "You are not authorized to view this page",
+            variant: "destructive",
+          });
+          toast({
+            title: "Error",
+            description: "Error fetching courses",
+            variant: "destructive",
+          });
+        }
       }
     };
     fetchCourses();
   }, [currentPage, refresh, search]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
   return (
     <>
       <AddCourseSlide setRefresh={setRefresh} refresh={refresh} />

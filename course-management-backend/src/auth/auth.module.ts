@@ -1,27 +1,30 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
 import { AuthMiddleware } from './auth.middleware';
+import { UsersModule } from '../users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
     UsersModule,
-    JwtModule.register({
-      global: true,
-      secret: 'secretKey',
-      signOptions: { expiresIn: '1d' },
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
     }),
   ],
   providers: [AuthService],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule], // Make JwtModule available globally
 })
 export class AuthModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware) // Apply the middleware
-      .forRoutes('auth/verify'); // Define the routes for the middleware
+    consumer.apply(AuthMiddleware).forRoutes('auth/verify');
   }
 }

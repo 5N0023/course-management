@@ -33,7 +33,7 @@ export function CoursesTable({
         </TableHeader>
         <TableBody>
           {courses.map((course, index) => (
-            <Drawer>
+            <Drawer key={course.id}>
               <DrawerTrigger asChild>
                 <TableRow
                   key={course.id}

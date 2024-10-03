@@ -45,7 +45,7 @@ export function LoginFrom({ loginState }: { loginState: "login" | "signup" }) {
     }
     try {
       const response = await axios.post(
-        `http://localhost:3000/auth/${loginState.toString()}`,
+        `/auth/${loginState.toString()}`,
         data
       );
       if (response.status === 200 || response.status === 201) {
@@ -71,7 +71,7 @@ export function LoginFrom({ loginState }: { loginState: "login" | "signup" }) {
         }
         router.push("/");
       }
-    } catch (error: any) {
+    } catch (error) {
       if (loginState === "signup") {
         toast({
           title: "signup failed",

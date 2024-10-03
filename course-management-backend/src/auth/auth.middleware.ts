@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 interface CustomRequest extends Request {
   session?: {
@@ -14,26 +15,29 @@ interface CustomRequest extends Request {
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
+
   use(req: CustomRequest, res: Response, next: NextFunction) {
-    // get jwt from bearer token
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       throw new UnauthorizedException('User not authenticated');
     }
+
     const token = authHeader.split(' ')[1];
-    // check if token is valid
-    const jwtService = new JwtService({});
-    let isLoggedIn = false;
-    try {
-      const decoded = jwtService.verify(token, { secret: 'secretKey' });
-      isLoggedIn = true;
-    } catch (err) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-    if (!isLoggedIn) {
-      throw new UnauthorizedException('User not authenticated');
+    if (!token) {
+      throw new UnauthorizedException('Invalid token format');
     }
 
-    next(); // Call the next middleware or route handler
+    try {
+      const secret = this.configService.get<string>('JWT_SECRET');
+      const decoded = this.jwtService.verify(token, { secret });
+      req.session = { user: decoded }; // Store decoded token info in session (optional)
+      next();
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 }

@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   // check token if valid by sending a request to the backend auth/verify as bareer token
   if (token) {
     try {
-      const response = await fetch("http://localhost:5000/auth/verify", {
+      const response = await fetch(`${process.env.API_URL}/auth/verify`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

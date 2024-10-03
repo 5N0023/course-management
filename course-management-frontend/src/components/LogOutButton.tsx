@@ -11,7 +11,7 @@ export default function LogOutButton() {
 
   const LogOutHandler = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/auth/logout");
+      const response = await axios.get("/auth/logout");
       if (response.status === 200) {
         // remove token from local storage
         localStorage.removeItem("token");
@@ -22,6 +22,13 @@ export default function LogOutButton() {
         router.push("/login");
       } else throw new Error("Logout failed");
     } catch (error) {
+      if (error.response.status === 401) {
+        toast({
+          title: "Unauthorized",
+          description: "You are not authorized to view this page",
+          variant: "destructive",
+        });
+      }
       toast({
         title: "Logout failed",
         description: "Please try again.",

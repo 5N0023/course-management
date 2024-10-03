@@ -5,7 +5,7 @@ export function SearchBar({
   setSearch,
 }: {
   search: string;
-  setSearch: any;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
     <div className="w-[60%] md:w-[50%]">

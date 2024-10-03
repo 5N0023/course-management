@@ -5,11 +5,22 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { CourseModule } from './course/course.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     AuthModule,
-    MongooseModule.forRoot('mongodb://root:password@localhost:27017/coursesdb?authSource=admin'),
+    ConfigModule.forRoot({
+      isGlobal: true, 
+      envFilePath: '.env', 
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URL'),
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
     CourseModule,
   ],

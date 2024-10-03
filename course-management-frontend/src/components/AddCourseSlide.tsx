@@ -14,12 +14,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import React, { useEffect, useState } from "react";
-import { Calendar, PackagePlus } from "lucide-react";
+import { PackagePlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Textarea } from "./ui/textarea";
 
-export function AddCourseSlide({ setRefresh, refresh }: { setRefresh: React.Dispatch<React.SetStateAction<boolean>>, refresh: boolean }) {
-  const [isVisible, setIsVisible] = useState(true);
+export function AddCourseSlide({
+  setRefresh,
+  refresh,
+}: {
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  refresh: boolean;
+}) {
+  const [isVisible, SetIsVisible] = useState(true);
   const [newCourse, setNewCourse] = useState({
     title: "",
     description: "",
@@ -35,9 +41,9 @@ export function AddCourseSlide({ setRefresh, refresh }: { setRefresh: React.Disp
 
     const handleScroll = () => {
       if (window.scrollY > lastScrollY) {
-        setIsVisible(false);
+        SetIsVisible(false);
       } else {
-        setIsVisible(true);
+        SetIsVisible(true);
       }
       lastScrollY = window.scrollY;
     };
@@ -65,15 +71,18 @@ export function AddCourseSlide({ setRefresh, refresh }: { setRefresh: React.Disp
       schedule: `${newCourse.schedule.time} ${newCourse.schedule.day}`,
     };
     try {
-      const response = await fetch("http://localhost:5000/course", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(postedCourse),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/course`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(postedCourse),
+        }
+      );
       if (response.status === 200 || response.status === 201) {
         toast({
           title: "Course added",
@@ -81,13 +90,29 @@ export function AddCourseSlide({ setRefresh, refresh }: { setRefresh: React.Disp
         });
         setRefresh(!refresh);
         document.getElementById("closeSlideButton")?.click();
+        setNewCourse({
+          title: "",
+          description: "",
+          instructor: "",
+          schedule: {
+            time: "12:00",
+            day: "monday",
+          },
+        });
       } else throw new Error("Course add failed");
     } catch (error) {
-      toast({
-        title: "Course add failed",
-        description: "Please try again.",
-        variant: "destructive",
-      });
+      if (error.response.status === 401) {
+        toast({
+          title: "Unauthorized",
+          description: "You are not authorized to view this page",
+          variant: "destructive",
+        });
+        toast({
+          title: "Course add failed",
+          description: "Please try again.",
+          variant: "destructive",
+        });
+      }
     }
     setDisplay(false);
   };
@@ -128,15 +153,14 @@ export function AddCourseSlide({ setRefresh, refresh }: { setRefresh: React.Disp
             <Label htmlFor="Description" className="text-right">
               Description
             </Label>
-            <Textarea placeholder="Type your message here." 
-            className="col-span-3 text-black"
-            value={newCourse.description}
-            onChange={(e) =>
-              setNewCourse({ ...newCourse, description: e.target.value })
-            }
-            
+            <Textarea
+              placeholder="Type your message here."
+              className="col-span-3 text-black"
+              value={newCourse.description}
+              onChange={(e) =>
+                setNewCourse({ ...newCourse, description: e.target.value })
+              }
             />
-          
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
